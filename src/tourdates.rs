@@ -5,7 +5,7 @@ use failure::Error;
 use select;
 use reqwest;
 
-pub fn compute_updated_hash() -> Result<Vec<u8>, Error> {
+pub fn fetch_tourdates() -> Result<Vec<Tourdate>, Error> {
     let html = reqwest::get("http://lordoftheringsinconcert.com/tour-dates/")?.text()?;
     let doc = Document::from(html.as_ref());
 
@@ -17,9 +17,13 @@ pub fn compute_updated_hash() -> Result<Vec<u8>, Error> {
         }
     }
 
+    Ok(all_tourdates)
+}
+
+pub fn compute_updated_hash(tourdates: &[Tourdate]) -> Result<Vec<u8>, Error> {
     let mut hasher = Blake2b::new();
 
-    for tourdate in all_tourdates.into_iter() {
+    for tourdate in tourdates {
         tourdate.push_hash(&mut hasher);
     }
 
@@ -27,10 +31,10 @@ pub fn compute_updated_hash() -> Result<Vec<u8>, Error> {
 }
 
 #[derive(Debug)]
-struct Tourdate {
-    city: String,
-    date: String,
-    buy_link: Option<String>,
+pub struct Tourdate {
+    pub city: String,
+    pub date: String,
+    pub buy_link: Option<String>,
 }
 
 impl Tourdate {

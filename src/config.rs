@@ -13,7 +13,10 @@ pub struct Config {
 pub fn from_env() -> Result<Config, Error> {
     let bucket = get_env("AWS_S3_BUCKET")?;
     let email_sender = get_env("EMAIL_SENDER")?;
-    let email_recipients = get_env("EMAIL_RECIPIENTS")?.split(',').map(String::from).collect();
+    let email_recipients = get_env("EMAIL_RECIPIENTS")?
+        .split(',')
+        .map(String::from)
+        .collect();
     let email_server = get_env("EMAIL_SERVER")?;
     let email_username = get_env("EMAIL_USERNAME")?;
     let email_password = get_env("EMAIL_PASSWORD")?;
