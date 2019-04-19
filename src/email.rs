@@ -1,7 +1,7 @@
 use failure::Error;
 use lettre::smtp::authentication::Credentials;
-use lettre::{EmailTransport, SmtpTransport};
-use lettre_email::{Email, EmailBuilder};
+use lettre::{Transport, SmtpClient, SendableEmail};
+use lettre_email::Email;
 
 use tourdates::Tourdate;
 use config::Config;
@@ -14,27 +14,27 @@ pub fn send_notification(config: &Config, tourdates: &[Tourdate]) -> Result<(), 
         config.email_password.to_string(),
     );
 
-    let mut mailer = SmtpTransport::simple_builder(config.email_server.clone())?
+    let mut mailer = SmtpClient::new_simple(&config.email_server)?
         .credentials(credentials)
         .smtp_utf8(true)
-        .build();
+        .transport();
 
-    mailer.send(&email)?;
+    mailer.send(email)?;
 
     Ok(())
 }
 
-fn build_email(config: &Config, tourdates: &[Tourdate]) -> Result<Email, Error> {
-    let mut builder = EmailBuilder::new();
-    builder.set_subject("New LOTR in concert tour dates!");
-    builder.add_from(config.email_sender.as_str());
-    builder.set_html(build_body(tourdates));
+fn build_email(config: &Config, tourdates: &[Tourdate]) -> Result<SendableEmail, Error> {
+    let mut builder = Email::builder()
+        .subject("New LOTR in concert tour dates!")
+        .from(config.email_sender.as_str())
+        .html(build_body(tourdates));
 
     for recipient in &config.email_recipients {
-        builder.add_to(recipient.as_str());
+        builder = builder.to(recipient.as_str());
     }
 
-    Ok(builder.build()?)
+    Ok(builder.build()?.into())
 }
 
 fn build_body(tourdates: &[Tourdate]) -> String {

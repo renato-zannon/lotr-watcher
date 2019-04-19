@@ -5,8 +5,8 @@ authors = ["Renato Zannon <renato@rrsz.com.br>"]
 
 [dependencies]
 failure = "0.1"
-lettre = "0.7"
-lettre_email = "0.7"
+lettre = "0.9"
+lettre_email = "0.9"
 reqwest = "0.9"
 rusoto_core = "0.38"
 rusoto_s3 = "0.38"
