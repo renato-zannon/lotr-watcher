@@ -1,4 +1,4 @@
-use rusoto_core::Region::SaEast1;
+use rusoto_core::{RusotoError, Region::SaEast1};
 use rusoto_s3::{GetObjectError, GetObjectOutput, GetObjectRequest, PutObjectRequest, S3, S3Client};
 use futures::Stream;
 use failure::Error;
@@ -10,7 +10,7 @@ pub struct Client {
 }
 
 pub fn new_client(config: &Config) -> Client {
-    let client = S3Client::simple(SaEast1);
+    let client = S3Client::new(SaEast1);
 
     Client {
         client,
@@ -36,14 +36,14 @@ impl Client {
             ..Default::default()
         };
 
-        let request = self.client.get_object(&get_request).sync();
+        let request = self.client.get_object(get_request).sync();
 
         let body = match request {
             Ok(GetObjectOutput {
                 body: Some(body), ..
             }) => body,
 
-            Ok(_) | Err(GetObjectError::NoSuchKey(_)) => return Ok(None),
+            Ok(_) | Err(RusotoError::Service(GetObjectError::NoSuchKey(_))) => return Ok(None),
 
             Err(e) => {
                 return Err(Error::from(e));
@@ -63,11 +63,11 @@ impl Client {
         let put_request = PutObjectRequest {
             bucket: self.bucket.clone(),
             key: KEY.to_string(),
-            body: Some(new_hash),
+            body: Some(new_hash.into()),
             ..Default::default()
         };
 
-        self.client.put_object(&put_request).sync()?;
+        self.client.put_object(put_request).sync()?;
 
         Ok(())
     }
