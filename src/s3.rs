@@ -1,8 +1,10 @@
-use rusoto_core::{RusotoError, Region::SaEast1};
-use rusoto_s3::{GetObjectError, GetObjectOutput, GetObjectRequest, PutObjectRequest, S3, S3Client};
-use futures::Stream;
-use failure::Error;
 use config::Config;
+use failure::Error;
+use futures::Stream;
+use rusoto_core::{Region::SaEast1, RusotoError};
+use rusoto_s3::{
+    GetObjectError, GetObjectOutput, GetObjectRequest, PutObjectRequest, S3Client, S3,
+};
 
 pub struct Client {
     client: S3Client,

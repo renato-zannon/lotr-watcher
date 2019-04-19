@@ -13,10 +13,10 @@ extern crate select;
 
 use failure::Error;
 
-mod s3;
-mod tourdates;
 mod config;
 mod email;
+mod s3;
+mod tourdates;
 
 fn main() {
     env_logger::init();

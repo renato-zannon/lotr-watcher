@@ -1,10 +1,10 @@
 use failure::Error;
 use lettre::smtp::authentication::Credentials;
-use lettre::{Transport, SmtpClient, SendableEmail};
+use lettre::{SendableEmail, SmtpClient, Transport};
 use lettre_email::Email;
 
-use tourdates::Tourdate;
 use config::Config;
+use tourdates::Tourdate;
 
 pub fn send_notification(config: &Config, tourdates: &[Tourdate]) -> Result<(), Error> {
     let email = build_email(config, tourdates)?;

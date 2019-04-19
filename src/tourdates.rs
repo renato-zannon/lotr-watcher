@@ -1,9 +1,9 @@
 use blake2::{Blake2b, Digest};
+use failure::Error;
+use reqwest;
+use select;
 use select::document::Document;
 use select::predicate::Class;
-use failure::Error;
-use select;
-use reqwest;
 
 pub fn fetch_tourdates() -> Result<Vec<Tourdate>, Error> {
     let html = reqwest::get("http://lordoftheringsinconcert.com/tour-dates/")?.text()?;
@@ -51,7 +51,8 @@ impl Tourdate {
 fn extract_tourdate(node: select::node::Node) -> Option<Tourdate> {
     let city = node.find(Class("tourdate-venue")).next()?;
     let date = node.find(Class("tourdate-date")).next()?;
-    let link_str = node.find(Class("tourdate-details"))
+    let link_str = node
+        .find(Class("tourdate-details"))
         .next()
         .and_then(|n| n.attr("href"))?;
 
