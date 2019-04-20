@@ -1,17 +1,9 @@
-extern crate blake2;
-extern crate env_logger;
+use env_logger;
 #[macro_use]
 extern crate failure;
-extern crate futures;
-extern crate lettre;
-extern crate lettre_email;
-extern crate openssl_probe;
-extern crate reqwest;
-extern crate rusoto_core;
-extern crate rusoto_s3;
-extern crate select;
 
 use failure::Error;
+use openssl_probe;
 
 mod config;
 mod email;

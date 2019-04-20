@@ -3,8 +3,8 @@ use lettre::smtp::authentication::Credentials;
 use lettre::{SendableEmail, SmtpClient, Transport};
 use lettre_email::Email;
 
-use config::Config;
-use tourdates::Tourdate;
+use crate::config::Config;
+use crate::tourdates::Tourdate;
 
 pub fn send_notification(config: &Config, tourdates: &[Tourdate]) -> Result<(), Error> {
     let email = build_email(config, tourdates)?;

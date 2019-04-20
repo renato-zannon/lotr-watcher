@@ -1,4 +1,4 @@
-use config::Config;
+use crate::config::Config;
 use failure::Error;
 use futures::Stream;
 use rusoto_core::{Region::SaEast1, RusotoError};

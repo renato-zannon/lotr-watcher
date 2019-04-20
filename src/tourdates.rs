@@ -1,7 +1,6 @@
 use blake2::{Blake2b, Digest};
 use failure::Error;
 use reqwest;
-use select;
 use select::document::Document;
 use select::predicate::Class;
 
@@ -48,7 +47,7 @@ impl Tourdate {
     }
 }
 
-fn extract_tourdate(node: select::node::Node) -> Option<Tourdate> {
+fn extract_tourdate(node: select::node::Node<'_>) -> Option<Tourdate> {
     let city = node.find(Class("tourdate-venue")).next()?;
     let date = node.find(Class("tourdate-date")).next()?;
     let link_str = node
