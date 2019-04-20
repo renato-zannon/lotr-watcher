@@ -1,4 +1,5 @@
 use crate::config::Config;
+use crate::tourdates::TourdateSource;
 use failure::Error;
 use futures::Stream;
 use rusoto_core::{Region::SaEast1, RusotoError};
@@ -11,18 +12,32 @@ pub struct Client {
     bucket: String,
 }
 
+pub struct ContextualClient<'s3> {
+    client: &'s3 S3Client,
+    bucket: &'s3 str,
+    key: &'static str,
+}
+
 pub fn new_client(config: &Config) -> Client {
     let client = S3Client::new(SaEast1);
 
     Client {
-        client,
+        client: client,
         bucket: config.bucket.clone(),
     }
 }
 
-const KEY: &'static str = "last-hash";
-
 impl Client {
+    pub fn tourdate_client<S: TourdateSource>(&self) -> ContextualClient {
+        ContextualClient {
+            client: &self.client,
+            bucket: &self.bucket,
+            key: S::S3_KEY,
+        }
+    }
+}
+
+impl<'s3> ContextualClient<'s3> {
     pub fn matches_existing_hash(&self, new_hash: &[u8]) -> Result<bool, Error> {
         match self.get_current_hash()? {
             Some(old_hash) => Ok(old_hash == new_hash),
@@ -33,8 +48,8 @@ impl Client {
 
     pub fn get_current_hash(&self) -> Result<Option<Vec<u8>>, Error> {
         let get_request = GetObjectRequest {
-            bucket: self.bucket.clone(),
-            key: KEY.to_string(),
+            bucket: self.bucket.to_string(),
+            key: self.key.to_string(),
             ..Default::default()
         };
 
@@ -63,8 +78,8 @@ impl Client {
 
     pub fn update_hash(&self, new_hash: Vec<u8>) -> Result<(), Error> {
         let put_request = PutObjectRequest {
-            bucket: self.bucket.clone(),
-            key: KEY.to_string(),
+            bucket: self.bucket.to_string(),
+            key: self.key.to_string(),
             body: Some(new_hash.into()),
             ..Default::default()
         };

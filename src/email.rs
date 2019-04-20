@@ -4,10 +4,13 @@ use lettre::{SendableEmail, SmtpClient, Transport};
 use lettre_email::Email;
 
 use crate::config::Config;
-use crate::tourdates::Tourdate;
+use crate::tourdates::{Tourdate, TourdateSource};
 
-pub fn send_notification(config: &Config, tourdates: &[Tourdate]) -> Result<(), Error> {
-    let email = build_email(config, tourdates)?;
+pub fn send_notification<S: TourdateSource>(
+    config: &Config,
+    tourdates: &[Tourdate],
+) -> Result<(), Error> {
+    let email = build_email::<S>(config, tourdates)?;
 
     let credentials = Credentials::new(
         config.email_username.to_string(),
@@ -24,9 +27,12 @@ pub fn send_notification(config: &Config, tourdates: &[Tourdate]) -> Result<(), 
     Ok(())
 }
 
-fn build_email(config: &Config, tourdates: &[Tourdate]) -> Result<SendableEmail, Error> {
+fn build_email<S: TourdateSource>(
+    config: &Config,
+    tourdates: &[Tourdate],
+) -> Result<SendableEmail, Error> {
     let mut builder = Email::builder()
-        .subject("New LOTR in concert tour dates!")
+        .subject(format!("New {} tour dates!", S::NAME))
         .from(config.email_sender.as_str())
         .html(build_body(tourdates));
 
