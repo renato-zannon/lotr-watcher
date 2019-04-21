@@ -2,7 +2,7 @@ use env_logger;
 #[macro_use]
 extern crate failure;
 
-use crate::tourdates::{LotrInConcert, TourdateSource};
+use crate::tourdates::{lotr_in_concert::LotrInConcert, TourdateSource};
 use failure::Error;
 use openssl_probe;
 
