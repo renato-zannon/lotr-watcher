@@ -4,6 +4,7 @@ use reqwest;
 use select::document::Document;
 
 pub mod lotr_in_concert;
+pub mod soen;
 
 #[derive(Debug)]
 pub struct Tourdate {
