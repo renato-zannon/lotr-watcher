@@ -3,6 +3,7 @@ use failure::Error;
 use reqwest;
 use select::document::Document;
 
+pub mod cellar_darling;
 pub mod lotr_in_concert;
 pub mod soen;
 

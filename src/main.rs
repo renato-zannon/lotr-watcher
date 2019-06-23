@@ -2,7 +2,9 @@ use env_logger;
 #[macro_use]
 extern crate failure;
 
-use crate::tourdates::{lotr_in_concert::LotrInConcert, soen::Soen, TourdateSource};
+use crate::tourdates::{
+    cellar_darling::CellarDarling, lotr_in_concert::LotrInConcert, soen::Soen, TourdateSource,
+};
 use failure::Error;
 use openssl_probe;
 
@@ -23,6 +25,7 @@ fn run() -> Result<(), Error> {
     let s3_client = s3::new_client(&config);
     check_tourdates::<LotrInConcert>(&s3_client, &config)?;
     check_tourdates::<Soen>(&s3_client, &config)?;
+    check_tourdates::<CellarDarling>(&s3_client, &config)?;
 
     Ok(())
 }
