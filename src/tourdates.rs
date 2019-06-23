@@ -37,6 +37,10 @@ pub trait TourdateSource {
         Ok(Self::extract_tourdates(&doc))
     }
 
+    fn enabled() -> bool {
+        true
+    }
+
     fn extract_tourdates(doc: &Document) -> Vec<Tourdate>;
 }
 

@@ -34,6 +34,10 @@ fn check_tourdates<S: TourdateSource>(
     s3_client: &s3::Client,
     config: &config::Config,
 ) -> Result<(), Error> {
+    if !S::enabled() {
+        return Ok(());
+    }
+
     let source_client = s3_client.tourdate_client::<S>();
 
     let tourdates = S::fetch_tourdates()?;
