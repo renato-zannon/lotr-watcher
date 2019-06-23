@@ -19,6 +19,10 @@ impl TourdateSource for LotrInConcert {
 
         all_tourdates
     }
+
+    fn enabled() -> bool {
+        false
+    }
 }
 
 impl LotrInConcert {
